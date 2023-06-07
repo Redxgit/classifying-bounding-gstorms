@@ -5,6 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
+*.vsdx
+Random-stats*
 
 # Distribution / packaging
 .Python
