@@ -2,6 +2,7 @@ from cdasws import CdasWs
 from cdasws.datarepresentation import DataRepresentation as dr
 import numpy as np
 import pandas as pd
+import os
 
 if __name__ == "__main__":
     cdas = (
@@ -42,6 +43,7 @@ if __name__ == "__main__":
     sym_asy["ASY_H"] = sym_asy["ASY_H"].replace(99999, np.nan)
 
     print(f"Saving data to ./data/sym_asy_indices.pkl")
+    os.makedirs("./data", exist_ok=True)
 
     # Save the DataFrame to a pickle file with gzip compression
     sym_asy.to_pickle("./data/sym_asy_indices.pkl", compression="gzip")
