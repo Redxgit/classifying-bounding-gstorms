@@ -11,6 +11,7 @@ if __name__ == "__main__":
 
     # Define start and end dates for data retrieval, needs to be in UTC for the cdasws library
     start_date_sym_asy = pd.to_datetime("1981-01-01", utc=True)
+    start_date_dst = pd.to_datetime("1957-01-01", utc=True)
     end_date = pd.to_datetime("2023-01-01", utc=True)
 
     # Print information about the data to be downloaded
@@ -47,3 +48,30 @@ if __name__ == "__main__":
 
     # Save the DataFrame to a pickle file with gzip compression
     sym_asy.to_pickle("./data/sym_asy_indices.pkl", compression="gzip")
+
+    print(f"Downloading DST data from {start_date_dst} until {end_date}")
+    print(
+        f"Data will be downloaded from the 'OMNI2_H0_MRG1HR' dataset with 1 hour resolution"
+    )
+
+    status, data = cdas.get_data(
+        "OMNI2_H0_MRG1HR",
+        ["DST1800"],
+        start_date_dst,
+        end_date,
+        dataRepresentation=dr.XARRAY,
+    )
+
+    dst = pd.DataFrame(data=data["Epoch"], columns=["datetime"])
+    dst["datetime"] = pd.to_datetime(dst["datetime"])
+    dst["DST"] = data["DST"].values
+    dst = dst.set_index("datetime")
+    start_date = pd.to_datetime("1981-01-01")
+    end_date = pd.to_datetime("2023-01-01")
+    dst["DST"] = dst["DST"].replace(99999, np.nan)
+
+    print(f"Saving data to dst_index.pkl")
+
+    dst.to_pickle("./data/dst_index.pkl", compression="gzip")
+
+    del dst
